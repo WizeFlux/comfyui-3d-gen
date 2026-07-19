@@ -1,0 +1,33 @@
+# ComfyUI workspace (cloned by bootstrap)
+ComfyUI/
+comfy/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Outputs
+outputs/
+output/
+
+# Downloaded models (large, don't commit)
+models/
+checkpoints/
+*.safetensors
+*.ckpt
+*.gguf
+*.glb
+*.ply
+*.stl
+!workflows/**/*.glb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
