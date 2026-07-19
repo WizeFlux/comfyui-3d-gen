@@ -19,10 +19,8 @@ checkpoints/
 *.safetensors
 *.ckpt
 *.gguf
-*.glb
-*.ply
-*.stl
-!workflows/**/*.glb
+# Keep workflow example images (small, contain workflow metadata)
+# and sample input images
 
 # OS
 .DS_Store
