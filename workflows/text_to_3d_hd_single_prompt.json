@@ -590,7 +590,7 @@
         "Node name for S&R": "CheckpointLoaderSimple"
       },
       "widgets_values": [
-        "sd3.5_large_fp8_scaled.safetensors"
+        "sd3.5_large.safetensors"
       ]
     },
     {
