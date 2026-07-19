@@ -572,9 +572,7 @@
         {
           "name": "CLIP",
           "type": "CLIP",
-          "links": [
-            101
-          ]
+          "links": []
         },
         {
           "name": "VAE",
@@ -1517,6 +1515,41 @@
       "widgets_values": [
         "No floating region.\nNo background artifacts.\nNo abnormalities.\nNothing that can't be 3D printed.\nNo really breakable parts like whiskers or dangling hair.\nNo perspective distortion.\nNo shadows or lighting inconsistency.\nNo multiple objects.\nNo text or watermarks.\nNo asymmetry when it should be symmetrical."
       ]
+    },
+    {
+      "id": 37,
+      "type": "TripleCLIPLoader",
+      "pos": [
+        -1047.4627685546875,
+        528.0982666015625
+      ],
+      "size": [
+        315,
+        130
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "CLIP",
+          "type": "CLIP",
+          "links": [
+            101
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "TripleCLIPLoader"
+      },
+      "widgets_values": [
+        "clip_l.safetensors",
+        "clip_g.safetensors",
+        "t5xxl_fp16.safetensors"
+      ],
+      "title": "TripleCLIP Loader (SD3.5 text encoders)"
     }
   ],
   "links": [
@@ -1530,8 +1563,8 @@
     ],
     [
       101,
-      1,
-      1,
+      37,
+      0,
       7,
       0,
       "CLIP"
