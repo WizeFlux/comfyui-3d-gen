@@ -14,18 +14,33 @@ err()  { echo "${RED}✗${NC} $*" >&2; }
 
 command -v python3 >/dev/null || { err "python3 not found. Install Xcode CLT: xcode-select --install"; exit 1; }
 command -v brew   >/dev/null || { warn "Homebrew not found — installing..."; /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; }
+# uv is installed below if needed; not required up-front
 
 # --- 1. comfy-cli -----------------------------------------------------------
-if ! command -v comfy >/dev/null 2>&1; then
-  log "Installing comfy-cli via pipx"
-  if ! command -v pipx >/dev/null 2>&1; then
-    brew install pipx
-    pipx ensurepath
+# pydantic-core (dep of comfy-cli) uses pyo3-ffi, which lags Python releases.
+# Python 3.14+ breaks pyo3-ffi <0.25. Pin to 3.12 via uv (preferred) or brew.
+NEED_PY="3.12"
+
+have_comfy() { command -v comfy >/dev/null 2>&1; }
+
+if ! have_comfy; then
+  # Preferred: uv (manages its own Python, no system pollution)
+  if ! command -v uv >/dev/null 2>&1; then
+    log "Installing uv"
+    brew install uv
   fi
-  pipx install comfy-cli
-  # pipx binaries land in ~/.local/bin
+  # `uv tool install` creates an isolated venv with the requested Python
+  log "Installing comfy-cli via uv (pinned to Python $NEED_PY)"
+  uv tool install --python "$NEED_PY" comfy-cli
+  # uv tools land in ~/.local/bin
   export PATH="$HOME/.local/bin:$PATH"
   grep -q '.local/bin' ~/.zshrc 2>/dev/null || echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+fi
+
+# Sanity: warn if the active python is too new for pyo3
+ACTIVE_PY=$(python3 -c 'import sys;print("%d.%d"%sys.version_info[:2])' 2>/dev/null || echo "0.0")
+if [[ "$ACTIVE_PY" > "3.13" ]] && ! have_comfy; then
+  warn "System python3 is $ACTIVE_PY — comfy-cli installed under uv's Python $NEED_PY, that's fine."
 fi
 
 comfy --skip-prompt tracking disable >/dev/null 2>&1 || true
