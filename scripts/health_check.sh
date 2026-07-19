@@ -44,12 +44,14 @@ fi
 
 echo
 echo "Native 3D nodes available (via /object_info):"
-if curl -sf http://127.0.0.1:8188/api/object_info >/dev/null 2>&1; then
-  curl -s http://127.0.0.1:8188/api/object_info > /tmp/comfy_obj_info.json
-  python3 - <<'PY' </tmp/comfy_obj_info.json
+OBJ_INFO="/tmp/comfy_obj_info_$$"
+if curl -sf http://127.0.0.1:8188/api/object_info -o "$OBJ_INFO" 2>/dev/null && [ -s "$OBJ_INFO" ]; then
+  python3 - "$OBJ_INFO" <<'PY'
 import sys, json
+path = sys.argv[1]
 try:
-    d = json.load(sys.stdin)
+    with open(path) as f:
+        d = json.load(f)
 except Exception as e:
     print(f"  (parse error: {e})")
     sys.exit(0)
@@ -61,7 +63,7 @@ if nodes:
 else:
     print("  (no 3D nodes found — update ComfyUI to latest nightly)")
 PY
-  rm -f /tmp/comfy_obj_info.json
+  rm -f "$OBJ_INFO"
 else
   no "server not reachable — cannot list nodes"
 fi
